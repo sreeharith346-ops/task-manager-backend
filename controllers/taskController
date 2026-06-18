@@ -1,0 +1,54 @@
+const Task = require("../models/Task");
+
+// POST
+exports.createTask = async (req, res) => {
+  const { title } = req.body;
+
+  if (!title) {
+    return res.status(400).json({
+      message: "Title is required"
+    });
+  }
+
+  const task = await Task.create({
+    ...req.body,
+    createdBy: req.user.userId
+  });
+
+  res.status(201).json(task);
+};
+
+// GET ALL
+exports.getTasks = async (req, res) => {
+  const tasks = await Task.find({
+    createdBy: req.user.userId
+  });
+
+  res.json(tasks);
+};
+
+// GET ONE
+exports.getTaskById = async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  res.json(task);
+};
+
+// UPDATE
+exports.updateTask = async (req, res) => {
+  const task = await Task.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+
+  res.json(task);
+};
+
+// DELETE
+exports.deleteTask = async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+
+  res.json({
+    message: "Task deleted"
+  });
+};
