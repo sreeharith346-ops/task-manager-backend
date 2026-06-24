@@ -63,27 +63,63 @@ export default function TaskCard({
           : "No Due Date"}
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap",
-          marginTop: "10px",
-        }}
-      >
-        <button onClick={() => onMarkComplete(task)}>
-          {task.status === "completed"
-            ? "Mark Pending"
-            : "Mark Complete"}
-        </button>
+     <div
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = "translateY(-5px)";
+    e.currentTarget.style.boxShadow =
+      "0 8px 20px rgba(0,0,0,0.2)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = "translateY(0)";
+    e.currentTarget.style.boxShadow =
+      "0 2px 5px rgba(0,0,0,0.1)";
+  }}
+  style={{
+    border: "1px solid #ddd",
+    borderRadius: "12px",
+    padding: "15px",
+    margin: "10px 0",
+    width: "100%",
+    boxSizing: "border-box",
+    background: "#fff",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+    transition: "0.3s",
+  }}
+>
+   <button
+  onClick={() => onMarkComplete(task)}
+  style={{
+    background:
+      task.status === "completed"
+        ? "#f59e0b"
+        : "#22c55e",
+    color: "white",
+  }}
+>
+  {task.status === "completed"
+    ? "Mark Pending"
+    : "Mark Complete"}
+</button>
 
-        <button onClick={() => onEdit(task)}>
-          Edit
-        </button>
+<button
+  onClick={() => onEdit(task)}
+  style={{
+    background: "#3b82f6",
+    color: "white",
+  }}
+>
+  Edit
+</button>
 
-        <button onClick={() => onDelete(task._id)}>
-          Delete
-        </button>
+<button
+  onClick={() => onDelete(task._id)}
+  style={{
+    background: "#ef4444",
+    color: "white",
+  }}
+>
+  Delete
+</button>    
       </div>
     </div>
   );

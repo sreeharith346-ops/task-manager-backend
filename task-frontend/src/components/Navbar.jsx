@@ -1,14 +1,15 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
- const {
-  logout,
-  isAuthenticated,
-  user,
-} = useContext(AuthContext);
+  const {
+    user,
+    logout,
+    isAuthenticated,
+  } = useContext(AuthContext);
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,47 +17,106 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const linkStyle = (path) => ({
+    color: "white",
+    textDecoration: "none",
+    padding: "8px 12px",
+    borderRadius: "8px",
+    background:
+      location.pathname === path
+        ? "rgba(255,255,255,0.25)"
+        : "transparent",
+  });
+
   return (
     <div
       style={{
-        padding: "10px",
         display: "flex",
-        gap: "15px",
-      }}
-    >
-      <Link to="/">Login</Link>
-
-      <Link to="/register">Register</Link>
-
-      <Link to="/dashboard">Dashboard</Link>
-
-      <Link to="/tasks">Tasks</Link>
-
-      <Link to="/profile">Profile</Link>
-
-     {isAuthenticated && (
-  <>
-    <div
-      style={{
-        width: "35px",
-        height: "35px",
-        borderRadius: "50%",
-        background: "#007bff",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
-        fontWeight: "bold",
+        padding: "15px 25px",
+        background:
+          "linear-gradient(90deg,#4f46e5,#7c3aed)",
+        color: "white",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+        flexWrap: "wrap",
+        gap: "10px",
       }}
     >
-      {user?.name?.charAt(0).toUpperCase()}
-    </div>
+      <h2 style={{ margin: 0 }}>
+        Task Manager
+      </h2>
 
-    <button onClick={handleLogout}>
-      Logout
-    </button>
-  </>
-)}
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        {!isAuthenticated && (
+          <>
+            <Link to="/" style={linkStyle("/")}>
+              Login
+            </Link>
+
+            <Link
+              to="/register"
+              style={linkStyle("/register")}
+            >
+              Register
+            </Link>
+          </>
+        )}
+
+        {isAuthenticated && (
+          <>
+            <Link
+              to="/dashboard"
+              style={linkStyle("/dashboard")}
+            >
+              Dashboard
+            </Link>
+
+            <Link
+              to="/tasks"
+              style={linkStyle("/tasks")}
+            >
+              Tasks
+            </Link>
+
+            <Link
+              to="/profile"
+              style={linkStyle("/profile")}
+            >
+              Profile
+            </Link>
+
+            <div
+              style={{
+                width: "35px",
+                height: "35px",
+                borderRadius: "50%",
+                background: "white",
+                color: "#4f46e5",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "bold",
+              }}
+            >
+              {user?.name?.charAt(0).toUpperCase() || "U"}
+            </div>
+
+            <span>{user?.name}</span>
+
+            <button onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

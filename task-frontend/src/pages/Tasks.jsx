@@ -30,7 +30,6 @@ export default function Tasks() {
       const res = await axiosInstance.get("/tasks");
       setTasks(res.data);
     } catch (error) {
-      console.log(error);
       toast.error("Failed to fetch tasks");
     } finally {
       setLoading(false);
@@ -51,22 +50,17 @@ export default function Tasks() {
       priority: "medium",
       dueDate: "",
     });
-
     setEditingTask(null);
   };
 
   const handleAddTask = async (e) => {
     e.preventDefault();
-
     setSubmitLoading(true);
 
     try {
       const res = await axiosInstance.post("/tasks", form);
-
       setTasks([res.data, ...tasks]);
-
       resetForm();
-
       toast.success("Task added");
     } catch (error) {
       toast.error(
@@ -91,7 +85,6 @@ export default function Tasks() {
 
   const handleUpdateTask = async (e) => {
     e.preventDefault();
-
     setSubmitLoading(true);
 
     try {
@@ -107,7 +100,6 @@ export default function Tasks() {
       );
 
       resetForm();
-
       toast.success("Task updated");
     } catch (error) {
       toast.error(
@@ -208,87 +200,156 @@ export default function Tasks() {
     (task) => task.priority === "high"
   ).length;
 
+  const filters = [
+    {
+      label: "All",
+      value: "all",
+      count: allCount,
+    },
+    {
+      label: "Pending",
+      value: "pending",
+      count: pendingCount,
+    },
+    {
+      label: "Completed",
+      value: "completed",
+      count: completedCount,
+    },
+    {
+      label: "High Priority",
+      value: "high",
+      count: highPriorityCount,
+    },
+  ];
+
   return (
-    <div>
-      <h1>Tasks</h1>
+    <div
+      style={{
+        padding: "25px",
+        maxWidth: "950px",
+        margin: "0 auto",
+      }}
+    >
+      <h1
+        style={{
+          textAlign: "center",
+          marginBottom: "25px",
+          color: "#312e81",
+        }}
+      >
+        Tasks
+      </h1>
 
-      <div>
-        <button onClick={() => setFilter("all")}>
-          All ({allCount})
-        </button>
-
-        <button onClick={() => setFilter("pending")}>
-          Pending ({pendingCount})
-        </button>
-
-        <button onClick={() => setFilter("completed")}>
-          Completed ({completedCount})
-        </button>
-
-        <button onClick={() => setFilter("high")}>
-          High Priority ({highPriorityCount})
-        </button>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "10px",
+          justifyContent: "center",
+          marginBottom: "20px",
+        }}
+      >
+        {filters.map((item) => (
+          <button
+            key={item.value}
+            onClick={() => setFilter(item.value)}
+            style={{
+              background:
+                filter === item.value ? "#4f46e5" : "#e0e7ff",
+              color:
+                filter === item.value ? "white" : "#312e81",
+            }}
+          >
+            {item.label} ({item.count})
+          </button>
+        ))}
       </div>
-
-      <br />
 
       <input
         type="text"
         placeholder="Search tasks..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        style={{
+          width: "100%",
+          marginBottom: "20px",
+          boxSizing: "border-box",
+        }}
       />
 
-      <form onSubmit={editingTask ? handleUpdateTask : handleAddTask}>
-        <h2>{editingTask ? "Edit Task" : "Add Task"}</h2>
+      <form
+        onSubmit={editingTask ? handleUpdateTask : handleAddTask}
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "15px",
+          boxShadow: "0 5px 15px rgba(0,0,0,0.15)",
+          marginBottom: "25px",
+        }}
+      >
+        <h2
+          style={{
+            color: "#312e81",
+            marginTop: 0,
+          }}
+        >
+          {editingTask ? "Edit Task" : "Add Task"}
+        </h2>
 
         <input
           name="title"
           placeholder="Title"
           value={form.title}
           onChange={handleChange}
+          style={{
+            width: "100%",
+            marginBottom: "12px",
+            boxSizing: "border-box",
+          }}
         />
-
-        <br />
-        <br />
 
         <textarea
           name="description"
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
+          style={{
+            width: "100%",
+            marginBottom: "12px",
+            boxSizing: "border-box",
+            minHeight: "80px",
+          }}
         />
-
-        <br />
-        <br />
 
         <select
           name="priority"
           value={form.priority}
           onChange={handleChange}
+          style={{
+            width: "100%",
+            marginBottom: "12px",
+            boxSizing: "border-box",
+          }}
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
 
-        <br />
-        <br />
-
         <input
           name="dueDate"
           type="date"
           value={form.dueDate}
           onChange={handleChange}
+          style={{
+            width: "100%",
+            marginBottom: "15px",
+            boxSizing: "border-box",
+          }}
         />
 
-        <br />
-        <br />
-
-        <button
-          type="submit"
-          disabled={submitLoading}
-        >
+        <button type="submit" disabled={submitLoading}>
           {submitLoading
             ? "Saving..."
             : editingTask
@@ -301,16 +362,27 @@ export default function Tasks() {
             type="button"
             disabled={submitLoading}
             onClick={resetForm}
+            style={{
+              marginLeft: "10px",
+              background: "#64748b",
+            }}
           >
             Cancel
           </button>
         )}
       </form>
 
-      <hr />
-
       {filteredTasks.length === 0 ? (
-        <h2>No tasks found</h2>
+       <div
+  style={{
+    textAlign: "center",
+    padding: "40px",
+  }}
+>
+  <h1>📋</h1>
+  <h2>No tasks found</h2>
+  <p>Create your first task to get started.</p>
+</div>
       ) : (
         filteredTasks.map((task) => (
           <TaskCard
